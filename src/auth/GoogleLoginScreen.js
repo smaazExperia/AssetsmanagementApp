@@ -56,7 +56,7 @@ const GoogleLoginScreen = ({navigation}) => {
       });
       const userInfo = await GoogleSignin.signIn();
       console.log('User Info --> ', userInfo);
-      navigation.replace('HomeScreen', {userInfo: userInfo});
+      navigation.replace('GoogleSheets', {userInfo: userInfo});
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         alert('User Cancelled the Login Flow');
@@ -80,7 +80,7 @@ const GoogleLoginScreen = ({navigation}) => {
       try {
         let info = await GoogleSignin.signInSilently();
         console.log('User Info --> ', info);
-        navigation.replace('HomeScreen', {userInfo: info});
+        navigation.replace('GoogleSheets', {userInfo: info});
       } catch (error) {
         if (error.code === statusCodes.SIGN_IN_REQUIRED) {
           alert('User has not signed in yet');
