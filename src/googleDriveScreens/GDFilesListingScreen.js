@@ -21,7 +21,7 @@ import GDrive from 'react-native-google-drive-api-wrapper';
 
 const APP_DIRECTORY = 'AboutReactAppExample';
 
-const GDFilesListingScreen = ({route}) => {
+const GDFilesListingScreen = ({navigation,route}) => {
   // State Defination
   const [listData, setListData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,22 +67,18 @@ const GDFilesListingScreen = ({route}) => {
         return alert('Failed to Initialize Google Drive');
       }
       // Create/Get Directory on Google Device
-      let directoryId = await GDrive.files.safeCreateFolder({
-        name: APP_DIRECTORY,
-        parents: ['root'],
-      });
-      console.log('directoryId -> ', directoryId);
+      // let directoryId = await GDrive.files.safeCreateFolder({
+      //   name: APP_DIRECTORY,
+      //   parents: ['root'],
+      // });
+      // console.log('directoryId -> ', directoryId);
       let data = await GDrive.files.list({
-        q:
-          GDrive._stringifyQueryParams(
-            {
-              trashed: false,
-              // mimeType: 'application/text'
-            },
-            '',
-            ' and ',
-            true,
-          ) + ` and '${directoryId}' in parents`,
+        q: GDrive._stringifyQueryParams(
+          {trashed: false, mimeType: 'application/vnd.google-apps.spreadsheet'},
+          '',
+          ' and ',
+          true,
+        ),
       });
       let result = await data.json();
       setListData(result.files);
@@ -123,7 +119,11 @@ const GDFilesListingScreen = ({route}) => {
 
   const getItem = item => {
     //Function for click on an item
-    alert(JSON.stringify(item));
+    // alert(JSON.stringify(item));
+    console.log(JSON.stringify(item))
+    navigation.navigate('GoogleSheets', {
+      item: item
+    });
   };
 
   return (

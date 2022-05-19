@@ -37,11 +37,7 @@ return (
         // Hiding header
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="GoogleSheets"
-        component={GoogleSheets}
-        options={{title: 'Google Sheets Example'}}
-      />
+
       <Stack.Screen
         name="HomeScreen"
         component={HomeScreen}
@@ -71,6 +67,11 @@ return (
         name="GDDownloadFileScreen"
         component={GDDownloadFileScreen}
         options={{title: 'Download File'}}
+      />
+      <Stack.Screen
+        name="GoogleSheets"
+        component={GoogleSheets}
+        options={{title: 'Google Sheets Example'}}
       />
     </Stack.Navigator>
   </NavigationContainer>

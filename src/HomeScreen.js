@@ -110,6 +110,11 @@ const HomeScreen = ({navigation, route}) => {
               onPress={() => navigation.navigate('GDDownloadFileScreen')}>
               <Text>Download File from Google Drive</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonStyle}
+              onPress={() => navigation.navigate('GoogleSheets')}>
+              <Text>Google Sheets</Text>
+            </TouchableOpacity>
           </ScrollView>
         </>
         <Text style={styles.footerHeading}>

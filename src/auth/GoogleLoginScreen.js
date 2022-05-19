@@ -3,7 +3,7 @@
 
 // Import React in our code
 import React, {useState, useEffect} from 'react';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // Import all the components we are going to use
 import {
   SafeAreaView,
@@ -19,6 +19,7 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from 'react-native-google-signin';
+import { access_token, appData } from '../constants/api';
 
 const GoogleLoginScreen = ({navigation}) => {
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ const GoogleLoginScreen = ({navigation}) => {
         'https://www.googleapis.com/auth/drive.metadata.readonly',
         'https://www.googleapis.com/auth/drive.apps.readonly',
         'https://www.googleapis.com/auth/drive.photos.readonly',
+        'https://www.googleapis.com/auth/spreadsheets',
       ],
       // Repleace with your webClientId
       // Generated from Firebase console
@@ -56,7 +58,20 @@ const GoogleLoginScreen = ({navigation}) => {
       });
       const userInfo = await GoogleSignin.signIn();
       console.log('User Info --> ', userInfo);
-      navigation.replace('GoogleSheets', {userInfo: userInfo});
+      const currentUser = GoogleSignin.getTokens().then(async(res) => {
+        console.log(res.accessToken); //<-------Get accessToken
+        appData.token = res.accessToken
+        await AsyncStorage.setItem('access', res.accessToken)
+        var postData = {
+          access_token: res.accessToken,
+          code: userInfo.idToken,
+        };
+
+        console.log(postData)
+      })
+
+
+      navigation.replace('HomeScreen', {userInfo: userInfo});
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         alert('User Cancelled the Login Flow');
@@ -80,7 +95,7 @@ const GoogleLoginScreen = ({navigation}) => {
       try {
         let info = await GoogleSignin.signInSilently();
         console.log('User Info --> ', info);
-        navigation.replace('GoogleSheets', {userInfo: info});
+        navigation.replace('HomeScreen', {userInfo: info});
       } catch (error) {
         if (error.code === statusCodes.SIGN_IN_REQUIRED) {
           alert('User has not signed in yet');
