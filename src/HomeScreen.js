@@ -2,6 +2,7 @@
 // https://aboutreact.com/react-native-google-drive/
 
 // Import React in our code
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState, useEffect} from 'react';
 
 // Import all the components we are going to use
@@ -17,6 +18,7 @@ import {
 
 // For Google Signin
 import {GoogleSignin} from 'react-native-google-signin';
+import {appData} from './constants/api';
 
 const HomeScreen = ({navigation, route}) => {
   //route.params.userInfo
@@ -34,6 +36,12 @@ const HomeScreen = ({navigation, route}) => {
   }, [navigation]);
 
   useEffect(() => {
+    async function getData() {
+      const access = await AsyncStorage.getItem('access');
+      console.log(access);
+      appData.token = access;
+    }
+    getData();
     setUserInfo(route.params.userInfo);
   }, []);
 

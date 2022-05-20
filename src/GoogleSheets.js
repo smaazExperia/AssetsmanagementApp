@@ -52,12 +52,13 @@ const GoogleSheets = ({route}) => {
   const [APIData, setAPIData] = useState('');
   const [head, setHead] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [text, onChangeText] = React.useState('Useless Text');
   console.log(route.params.item);
+  console.log(route.params.access_token);
   console.log('appdata', appData.token);
   const SHEET_ID = route.params.item.id;
-  const ACCESS_TOKEN = appData.token;
+  const ACCESS_TOKEN = route.params.access_token;
 
   const onSubmit = () => {
     axios
@@ -139,6 +140,7 @@ const GoogleSheets = ({route}) => {
     );
   };
   const appendValues = () => {
+    setLoading(true);
     setModalVisible(!modalVisible);
     let params = {
       valueInputOption: 'USER_ENTERED',
@@ -157,13 +159,17 @@ const GoogleSheets = ({route}) => {
         Authorization: `Bearer ${ACCESS_TOKEN}`,
       },
       body: JSON.stringify({
-        values: [[`${model}`,`${make}`,`${type}`,`${year}`,`${hp}`]],
+        values: [[`${model}`, `${make}`, `${type}`, `${year}`, `${hp}`]],
       }),
     })
       .then(response => {
         console.log(response);
+        setLoading(false);
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        setLoading(false);
+        console.log(error);
+      });
   };
   useEffect(() => {
     console.log('sheet id', SHEET_ID);
@@ -185,43 +191,51 @@ const GoogleSheets = ({route}) => {
       .catch(error => {
         console.log('Error', error);
       });
-  }, []);
+  }, [loading]);
 
-  console.log(head);
-
-  return (
-    <View style={styles.dataView}>
-      <ScrollView>
-        {APIData.length > 0 ? (
-          APIData.map((item, index) => (
-            <View key={index}>
-              <View
-                style={{
-                  paddingHorizontal: 10,
-                  flexWrap: 'wrap',
-                  flexDirection: 'row',
-                  justifyContent: 'space-evenly',
-                }}>
-                {item.map((titem,tindex) => (
-                  <Text key={tindex} style={styles.titleText}>{titem}</Text>
-                ))}
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.dataView}>
+        <ScrollView>
+          {APIData.length > 0 ? (
+            APIData.map((item, index) => (
+              <View key={index}>
+                <View
+                  style={{
+                    paddingHorizontal: 10,
+                    flexWrap: 'wrap',
+                    flexDirection: 'row',
+                    justifyContent: 'space-evenly',
+                  }}>
+                  {item.map((titem, tindex) => (
+                    <Text key={tindex} style={styles.titleText}>
+                      {titem}
+                    </Text>
+                  ))}
+                </View>
               </View>
+            ))
+          ) : (
+            <View style={styles.noRecordView}>
+              <Text style={styles.noRecordText}>{'No Record Found'}</Text>
             </View>
-          ))
-        ) : (
-          <View style={styles.noRecordView}>
-            <Text style={styles.noRecordText}>{'No Record Found'}</Text>
-          </View>
-        )}
-      </ScrollView>
-      <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => setModalVisible(true)}>
-        <Text style={styles.textStyle}>Show Modal</Text>
-      </Pressable>
-      {modalView()}
-    </View>
-  );
+          )}
+        </ScrollView>
+        <Pressable
+          style={[styles.button, styles.buttonOpen]}
+          onPress={() => setModalVisible(true)}>
+          <Text style={styles.textStyle}>Show Modal</Text>
+        </Pressable>
+        {modalView()}
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

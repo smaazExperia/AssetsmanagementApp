@@ -21,6 +21,7 @@ import GDrive from 'react-native-google-drive-api-wrapper';
 
 const APP_DIRECTORY = 'AboutReactAppExample';
 
+var access_token = ''
 const GDFilesListingScreen = ({navigation,route}) => {
   // State Defination
   const [listData, setListData] = useState([]);
@@ -35,6 +36,7 @@ const GDFilesListingScreen = ({navigation,route}) => {
     // Getting Access Token from Google
     let token = await GoogleSignin.getTokens();
     if (!token) return alert('Failed to get token');
+    access_token = token.accessToken
     console.log('res.accessToken =>', token.accessToken);
     // Setting Access Token
     GDrive.setAccessToken(token.accessToken);
@@ -120,12 +122,13 @@ const GDFilesListingScreen = ({navigation,route}) => {
   const getItem = item => {
     //Function for click on an item
     // alert(JSON.stringify(item));
-    console.log(JSON.stringify(item))
     navigation.navigate('GoogleSheets', {
-      item: item
+      item: item,
+      access_token: access_token
     });
   };
 
+  console.log(access_token)
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.titleText}>Listing of Files from Google Drive</Text>
